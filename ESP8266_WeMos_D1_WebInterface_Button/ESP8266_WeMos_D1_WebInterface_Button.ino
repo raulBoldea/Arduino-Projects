@@ -1,14 +1,13 @@
 /*********
-  Rui Santos
-  Complete project details at http://randomnerdtutorials.com
+  BRaul
 *********/
 
 // Load Wi-Fi library
 #include <ESP8266WiFi.h>
 
 // Replace with your network credentials
-const char* ssid     = "!";
-const char* password = "frigider";
+const char* ssid     = "SSID";
+const char* password = "password";
 
 // Set web server port number to 80
 WiFiServer server(80);
