@@ -12,7 +12,7 @@
 #define LED D5  //use Digital Output No. 5 from board
 
 //SSID and Password of your WiFi router
-const char* ssid = "@";
+const char* ssid = "iPhone";
 const char* password = "laborator5";
 
 ESP8266WebServer server(80); //Server on port 80
@@ -57,11 +57,13 @@ void setup(void)
 {
   Serial.begin(115200);
   
-  WiFi.begin(ssid, password);     //Connect to your WiFi router
-  IPAddress ip(192,168,137,99); // set an StaticIp Address in order to not look for IP all the times
-  IPAddress gateway(192,168,137,254); // set the Gateway
-  IPAddress subnet(255,255,255,0); // set the Subnet Mask
-  WiFi.config(ip,gateway,subnet); // add the configuration to the server
+  WiFi.begin(ssid,password);     //Connect to your WiFi router
+
+  Serial.println(WiFi.localIP());
+//  IPAddress ip(192,168,1,99); // set an StaticIp Address in order to not look for IP all the times
+//  IPAddress gateway(192,168,1,254); // set the Gateway
+//  IPAddress subnet(255,255,255,0); // set the Subnet Mask
+//  WiFi.config(ip,gateway,subnet); // add the configuration to the server
   Serial.println("");
 
   //Onboard LED port Direction output
