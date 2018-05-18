@@ -3,15 +3,17 @@ import processing.serial.*;
 Serial myPort;
 PImage bg,normal,poluted_inside;
 PFont mono;
-int i = 0;
+int i,value = 0;
 String rezultat = "";
 String val1 ="";
+color led;
 void setup()
 {
 //size(1360,680);
 fullScreen();
 myPort = new Serial(this, Serial.list()[0], 57600);
 myPort.bufferUntil('\n');
+led = color(0,254,0);
 bg = loadImage("carbon-fiber.jpg");
 normal = loadImage("air1.png");
 poluted_inside = loadImage("air2.png");
@@ -41,20 +43,26 @@ while(myPort.available() > 0)
   textSize(20);
   text("Interfata pentru monitorizarea calitatii aerului",150,200);
   fill(0);
+  text("Buton pentru inchidere / deschidere geam",500,650);
   text(""+rezultat,150,230); //<>//
   //println(); //<>//
-  ellipse(700, 550, 100, 100);
-  fill(128,128,128);
+  ellipse(700, 550, 104, 104);
+  fill(40,40,40);
   ellipse(700, 550, 95, 95);
   fill(255,255,255);
   ellipse(700, 550, 50, 50);
-  fill(128,128,128);
+  fill(40,40,40);
   ellipse(700, 550, 35, 35);
-  fill(0);
-  strokeCap(ROUND);
-  line(700, 520, 700,540);
-  text("Buton pentru inchidere / deschidere geam",500,650);
   
+  strokeWeight(6);
+  strokeCap(PROJECT);
+  //fill(255,255,255);
+  stroke(255,255);
+  line(700, 520, 700,540);
+  strokeWeight(0);
+  fill(led);
+  ellipse(700, 618, 15, 15);
+    
   if(rezultat != null){
   val1=""+rezultat+"";
   val1=val1.trim();
@@ -70,4 +78,20 @@ while(myPort.available() > 0)
     
   }
 }
-} //<>// //<>// //<>// //<>// //<>// //<>// //<>//
+}  //<>//
+void mousePressed() {
+
+  overCircle(700,550,104);
+}
+boolean overCircle(int x, int y, int diameter) {
+  float disX = x - mouseX;
+  float disY = y - mouseY;
+  if (sqrt(sq(disX) + sq(disY)) < diameter/2 ) { //<>//
+    led = color(255,0,0); //<>// //<>// //<>// //<>// //<>// //<>// //<>// //<>// //<>//
+    return true;
+  } else {
+    led = color(0,255,0);
+    return false;
+  }
+}
+//<>// //<>// //<>// //<>// //<>// //<>//
