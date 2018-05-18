@@ -1,52 +1,33 @@
-#include <SPI.h>
-#include "RF24.h"
-#include "nRF24L01.h"
-#include "printf.h"
+    #include <SPI.h>
+    #include "nRF24L01.h"
+    #include "RF24.h"
 
-RF24 myRadio (7,8);
-const uint64_t pipe = 0xB01DFACECEL;
-//int sensorValue;
-struct package
-{
-  int id=1;
-  int sensorValue = 0;
-  int code = 2;
-  char text[100] = "text";
-};
+    RF24 radio(9,10);
 
-typedef struct package Package;
-Package data;
+    const uint64_t pipes[2] = { 0xF0F0F0F0E1LL, 0xF0F0F0F0D2LL };
+    unsigned long Command;
+    void setup()
+    {
+    Serial.begin(9600);
 
-void setup() {
- Serial.begin(9600);
- printf_begin();
- delay(1000);
+    radio.begin();
+    radio.setRetries(15,15);
+    radio.openReadingPipe(1,pipes[1]);
+    radio.startListening();
+    radio.printDetails();
+    radio.openWritingPipe(pipes[0]);
+    radio.openReadingPipe(1,pipes[1]);
+    radio.stopListening();
+    }
 
- myRadio.begin();
- myRadio.setChannel(115);
- myRadio.openWritingPipe(pipe);
- myRadio.setRetries(15,15);
- myRadio.printDetails();
- myRadio.stopListening();
- Serial.println("Set-Up Done");
- delay(1000);
-}
+    void loop(void)
+    {
+    radio.stopListening();
 
-void loop() {
-   if(!myRadio.write(&data, sizeof(data)))
-   {
-    Serial.println("error!!");
-//    myRadio.printDetails();
-//    sensorValue = analogRead(A0);
-   }
-   Serial.print("\nPackage Sent");
-   Serial.println(data.id);
-   data.sensorValue = analogRead(A0);
-   Serial.println(data.sensorValue);
-   Serial.println(data.code);
-   Serial.println(data.text);
-//   sensorValue = analogRead(A0);
-   data.id += 1;
-   data.code += 1;
-   delay(500);
-}
+    radio.write( &Command, sizeof(unsigned long) );
+    Command = analogRead(A0);
+    Serial.println(Command);
+    radio.startListening();
+
+    delay(1000);
+    }

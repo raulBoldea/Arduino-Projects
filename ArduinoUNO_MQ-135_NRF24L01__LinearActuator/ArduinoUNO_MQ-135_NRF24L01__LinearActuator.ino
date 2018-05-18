@@ -37,6 +37,9 @@ void setup(void)
   pinMode(forwards, OUTPUT);//set relay as an output
   pinMode(backwards, OUTPUT);//set relay as an output
   state = false;
+//  pinMode (anInput, INPUT);
+      digitalWrite(forwards, HIGH);
+    digitalWrite(backwards, HIGH);
   radio.begin();
   radio.setRetries(15,15);
   radio.openReadingPipe(1,pipes[1]);
@@ -79,55 +82,49 @@ void loop(void)
   
 //  Serial.println("Receiver Sensor Value is: ");
 //  Serial.println(Co2Ppm);
+ 
 //  Serial.println(state);
-  if(senzorData < 400 && Co2Ppm < 450 && state == true)
+  if(senzorData < 400 && Co2Ppm < 450)
   {
-    Serial.println("The air is at normal values");
+    Serial.println("Calitatea aerului este la valori normale");
     Count = 0;
     digitalWrite(forwards, HIGH);
     digitalWrite(backwards, HIGH);
   }
-  else if(Co2Ppm > 500 && senzorData < 500 && state == true) 
+  else if(Co2Ppm > 500 && senzorData < 500) 
   {
-    Serial.println("Open the Window you might get intoxicated inside");
+    Serial.println("Calitatea aerului din incapere este periculoasa");
     Count++;
     if(Count == 10)
     {
-      Serial.println("The air outside is too poluted");
-      
-      Count = 0;
-      state = false;
-      
-      digitalWrite(forwards, HIGH);
-      digitalWrite(backwards, LOW);//Activate the relay the other direction, they must be different to move the motor
-      Serial.println("Second way");
-      delay(3000);// wait 3 seconds
-  
-      digitalWrite(forwards, HIGH);
-      digitalWrite(backwards, HIGH);//Deactivate both relays to brake the motor
+      if(state == false)
+      {
+        Count = 0;
+        digitalWrite(forwards, HIGH);
+        digitalWrite(backwards, LOW);//Activate the relay the other direction, they must be different to move the motor
+        Serial.println("Second way");
+        delay(3000);// wait 3 seconds
+        state = true;
+        digitalWrite(forwards, HIGH);
+        digitalWrite(backwards, HIGH);//Deactivate both relays to brake the motor
+      }
     }
   }
-  else if (senzorData > 500 && state == false)
+  else if (senzorData > 500)
   {
-    state = true;
+    Serial.println("Calitatea aerului din exterior este rea");
+    if(state == true)
+    {
+      state = false;
+      digitalWrite(forwards, LOW);
+      digitalWrite(backwards, HIGH);//Activate the relay one direction, they must be different to move the motor
+      Serial.println("One way");
+      delay(3000); // wait 3 seconds
+      Count = 0;
+      digitalWrite(forwards, HIGH);
+      digitalWrite(backwards, HIGH);//Deactivate both relays to brake the motor 
+    }
     
-    digitalWrite(forwards, LOW);
-    digitalWrite(backwards, HIGH);//Activate the relay one direction, they must be different to move the motor
-    Serial.println("One way");
-    delay(3000); // wait 3 seconds
-    
-    digitalWrite(forwards, HIGH);
-    digitalWrite(backwards, HIGH);//Deactivate both relays to brake the motor 
-    
-    Count = 0;
-  }
-  else
-  {
-    Serial.println("The air is at normal values2");
-    Count = 0;
-    
-    digitalWrite(forwards, HIGH);
-    digitalWrite(backwards, HIGH);
   }
   delay(1100);
 }

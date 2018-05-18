@@ -10,7 +10,7 @@ void setup() {
   Serial.begin(9600);
   Serial.println("-----------");
   Serial.println("Hello");
-  pinMode(ledRosu, OUTPUT);
+//  pinMode(ledRosu, OUTPUT);
 }
 
 void loop() {
@@ -24,13 +24,13 @@ void loop() {
   
   Serial.print("Sensor2 =");
   Serial.println(sensorValue2);
-  if(sensorValue1 == sensorValue2)
-  {
-  digitalWrite(ledRosu, HIGH);
-  }
-  else
-  {
-    digitalWrite(ledRosu, LOW);
-    }
-  delay(5000);
+//  if(sensorValue1 == sensorValue2)
+//  {
+//  digitalWrite(ledRosu, HIGH);
+//  }
+//  else
+//  {
+//    digitalWrite(ledRosu, LOW);
+//    }
+  delay(2000);
 }

@@ -1,48 +1,39 @@
-#include <SPI.h>
-#include "RF24.h"
-#include "nRF24L01.h"
-#include "printf.h"
+    #include <SPI.h>
+    #include "nRF24L01.h"
+    #include "RF24.h"
 
-RF24 myRadio (7,8);
-const uint64_t pipe = 0xB01DFACECEL;
-struct package
-{
-  int id=0;
-  int sensorValue;
-  int code = 0;
-  char text[100] = "";
-};
+    RF24 radio(9,10);
 
-typedef struct package Package;
-Package data;
+    const uint64_t pipes[2] = { 0xF0F0F0F0E1LL, 0xF0F0F0F0D2LL };
 
-void setup() {
- Serial.begin(9600);
- printf_begin();
-// delay(1000);
+    typedef enum { role_ping_out = 1, role_pong_back } role_e;
 
- myRadio.begin();
- myRadio.setChannel(115);
- myRadio.openReadingPipe(1,pipe);
- myRadio.printDetails();
- myRadio.startListening();
+    const char* role_friendly_name[] = { "invalid", "Ping out", "Pong back"};
 
- Serial.println("Set-Up Done");
- delay(1000);
-}
+    role_e role = role_pong_back;
 
-void loop() {
-  if(myRadio.available())
- {
-  while(myRadio.available())
-   {
-     myRadio.read(&data, sizeof(data));
-     Serial.print("\nPackage Received");
-     Serial.println(data.id);
-     Serial.println(data.sensorValue);
-     Serial.println(data.code);
-     Serial.println(data.text);
-   }
- }
- delay(500);
-}    
+    void setup(void)
+    {
+    Serial.begin(9600);
+    radio.begin();
+    radio.setRetries(15,15);
+    radio.openReadingPipe(1,pipes[1]);
+    radio.startListening();
+    radio.printDetails();
+    radio.openWritingPipe(pipes[1]);
+    radio.openReadingPipe(1,pipes[0]);
+    radio.startListening();
+    }
+
+    void loop(void)
+    {
+
+    if ( radio.available() )
+    {
+    unsigned long data = 0;
+    radio.read( &data, sizeof(unsigned long) );
+    Serial.println(data);
+
+    delay(20);
+    }
+    }
