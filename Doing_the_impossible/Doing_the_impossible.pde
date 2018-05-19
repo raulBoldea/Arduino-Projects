@@ -6,26 +6,32 @@ PFont mono;
 int i,value = 0;
 String rezultat = "";
 String val1 ="";
-color led;
+boolean switcer = true;
+color led,buton_on_off,line;
+
 void setup()
 {
 //size(1360,680);
 fullScreen();
 myPort = new Serial(this, Serial.list()[0], 57600);
 myPort.bufferUntil('\n');
-led = color(0,254,0);
+led = color(255,0,0);
+line = color (0,0);
+buton_on_off = color(0,0,0);
 bg = loadImage("carbon-fiber.jpg");
 normal = loadImage("air1.png");
 poluted_inside = loadImage("air2.png");
+println(myPort.readStringUntil('\n'));
 }
 void draw()
 {
 while(myPort.available() > 0)
 {
   rezultat = myPort.readStringUntil('\n');
+  println(rezultat);
   if(rezultat != null)
   {
-  //println(rezultat);
+  println(rezultat);
   }
   background(bg);
   mono = createFont("ROCK.TTF",42);
@@ -49,7 +55,7 @@ while(myPort.available() > 0)
   ellipse(700, 550, 104, 104);
   fill(40,40,40);
   ellipse(700, 550, 95, 95);
-  fill(255,255,255);
+  fill(buton_on_off);
   ellipse(700, 550, 50, 50);
   fill(40,40,40);
   ellipse(700, 550, 35, 35);
@@ -57,7 +63,7 @@ while(myPort.available() > 0)
   strokeWeight(6);
   strokeCap(PROJECT);
   //fill(255,255,255);
-  stroke(255,255);
+  stroke(line);
   line(700, 520, 700,540);
   strokeWeight(0);
   fill(led);
@@ -82,15 +88,27 @@ while(myPort.available() > 0)
 void mousePressed() {
 
   overCircle(700,550,104);
+  
 }
 boolean overCircle(int x, int y, int diameter) {
   float disX = x - mouseX;
   float disY = y - mouseY;
   if (sqrt(sq(disX) + sq(disY)) < diameter/2 ) { //<>//
-    led = color(255,0,0); //<>// //<>// //<>// //<>// //<>// //<>// //<>// //<>// //<>//
+    if(switcer == true)
+    {led = color(255,0,0); //<>//
+     myPort.write("2");
+     buton_on_off = color(0,0,0);
+     line = color(0,0);
+     switcer = false;} 
+    else if(switcer == false)
+    {led = color(0,255,0);
+    myPort.write("1");
+    line = color(255,255);
+    buton_on_off = color(255,255,255);
+  switcer = true;}
     return true;
   } else {
-    led = color(0,255,0);
+    
     return false;
   }
 }

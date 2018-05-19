@@ -20,6 +20,8 @@ const int forwards = 7;
 const int backwards = 6;
 RF24 radio(9,10);
 
+int LED = 5;
+int input = 0;
 int Co2Ppm = 0;
 int Count = 0;
 boolean state;
@@ -40,6 +42,8 @@ void setup(void)
 //  pinMode (anInput, INPUT);
       digitalWrite(forwards, HIGH);
     digitalWrite(backwards, HIGH);
+    pinMode(LED, OUTPUT);
+digitalWrite(LED, LOW);
   radio.begin();
   radio.setRetries(15,15);
   radio.openReadingPipe(1,pipes[1]);
@@ -81,7 +85,7 @@ void loop(void)
   }
   
 //  Serial.println("Receiver Sensor Value is: ");
-//  Serial.println(Co2Ppm);
+  Serial.println(Co2Ppm);
  
 //  Serial.println(state);
   if(senzorData < 400 && Co2Ppm < 450)
@@ -127,4 +131,30 @@ void loop(void)
     
   }
   delay(1100);
+    if (Serial.available())
+  {
+    input = Serial.parseInt();
+    
+    // put your main code here, to run repeatedly:
+    if (input == 1)
+    {
+        digitalWrite(forwards, HIGH);
+        digitalWrite(backwards, LOW);
+        delay(3000);// wait 3 seconds
+        digitalWrite(forwards, HIGH);
+        digitalWrite(backwards, HIGH);
+    }
+    else if( input ==2)
+    {
+      digitalWrite(forwards, LOW);
+      digitalWrite(backwards, HIGH);
+      delay(3000);
+      digitalWrite(forwards, HIGH);
+      digitalWrite(backwards, HIGH);
+      }
+      Serial.println(input);
+//  delay(7000);
+//  digitalWrite(LED, LOW);
+//  delay(500);
+  }
 }
