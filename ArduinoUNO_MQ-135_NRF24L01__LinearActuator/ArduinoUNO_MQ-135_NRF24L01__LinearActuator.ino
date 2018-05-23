@@ -85,7 +85,7 @@ void loop(void)
   }
   
 //  Serial.println("Receiver Sensor Value is: ");
-  Serial.println(Co2Ppm);
+//  Serial.println(Co2Ppm);
  
 //  Serial.println(state);
   if(senzorData < 400 && Co2Ppm < 450)
@@ -97,21 +97,21 @@ void loop(void)
   }
   else if(Co2Ppm > 500 && senzorData < 500) 
   {
-    Serial.println("Calitatea aerului din incapere este periculoasa");
+    Serial.println("Calitatea aerului din incapere este periculoasa !");
     Count++;
     if(Count == 10)
     {
-      if(state == false)
-      {
-        Count = 0;
-        digitalWrite(forwards, HIGH);
-        digitalWrite(backwards, LOW);//Activate the relay the other direction, they must be different to move the motor
-        Serial.println("Second way");
-        delay(3000);// wait 3 seconds
-        state = true;
-        digitalWrite(forwards, HIGH);
-        digitalWrite(backwards, HIGH);//Deactivate both relays to brake the motor
-      }
+        if(state == false)
+        {
+          Count = 0;
+          digitalWrite(forwards, HIGH);
+          digitalWrite(backwards, LOW);//Activate the relay the other direction, they must be different to move the motor
+          delay(3000);// wait 3 seconds
+          state = true;
+          Serial.println("Calitatea aerului din incapere este periculoasa  !");
+          digitalWrite(forwards, HIGH);
+          digitalWrite(backwards, HIGH);//Deactivate both relays to brake the motor
+        }
     }
   }
   else if (senzorData > 500)
@@ -136,23 +136,26 @@ void loop(void)
     input = Serial.parseInt();
     
     // put your main code here, to run repeatedly:
-    if (input == 1)
+    if (input == 1)//retragere motor
     {
         digitalWrite(forwards, HIGH);
         digitalWrite(backwards, LOW);
         delay(3000);// wait 3 seconds
         digitalWrite(forwards, HIGH);
         digitalWrite(backwards, HIGH);
+        state = true;
     }
-    else if( input ==2)
+    else if( input ==2)//actionare motor
     {
       digitalWrite(forwards, LOW);
       digitalWrite(backwards, HIGH);
       delay(3000);
       digitalWrite(forwards, HIGH);
       digitalWrite(backwards, HIGH);
+       state = false;
       }
       Serial.println(input);
+
 //  delay(7000);
 //  digitalWrite(LED, LOW);
 //  delay(500);

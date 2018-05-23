@@ -12,8 +12,8 @@
 #define LED D5  //use Digital Output No. 5 from board
 
 //SSID and Password of your WiFi router
-const char* ssid = "iPhone";
-const char* password = "laborator5";
+const char* ssid = "blank";
+const char* password = "blank";
 
 ESP8266WebServer server(80); //Server on port 80
 
@@ -71,7 +71,7 @@ void setup(void)
   pinMode(LED,OUTPUT); 
   
   // Wait for connection
-  while (WiFi.status() != WL_CONNECTED)
+  while (WiFi.status() != WL_CONNECTED) 
   {
     delay(500);
     Serial.print(".");

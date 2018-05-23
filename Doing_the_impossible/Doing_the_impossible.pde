@@ -7,6 +7,7 @@ int i,value = 0;
 String rezultat = "";
 String val1 ="";
 boolean switcer = true;
+String test = "",test1 = "";
 color led,buton_on_off,line;
 
 void setup()
@@ -32,7 +33,7 @@ while(myPort.available() > 0)
   if(rezultat != null)
   {
   println(rezultat);
-  }
+  } //<>// //<>// //<>//
   background(bg);
   mono = createFont("ROCK.TTF",42);
   textFont(mono);
@@ -50,7 +51,7 @@ while(myPort.available() > 0)
   text("Interfata pentru monitorizarea calitatii aerului",150,200);
   fill(0);
   text("Buton pentru inchidere / deschidere geam",500,650);
-  text(""+rezultat,150,230); //<>//
+  text(""+rezultat,148,230); //<>//
   //println(); //<>//
   ellipse(700, 550, 104, 104);
   fill(40,40,40);
@@ -75,7 +76,7 @@ while(myPort.available() > 0)
   i++;
   if(val1.equals("Calitatea aerului este la valori normale"))
     {image(normal, 350, 245);}
-  else if(val1.equals("Calitatea aerului din incapere este periculoasa"))
+  else if(val1.equals("Calitatea aerului din incapere este periculoasa !"))
   {
   image(poluted_inside, 350, 245);
   }
@@ -83,7 +84,28 @@ while(myPort.available() > 0)
   {println("triggerd");}
     
   }
+  test = ""+rezultat+""; //<>//
+  test = test.trim(); //<>//
+  
+  if(test.equals("Calitatea aerului din incapere este periculoasa  !")) //<>//
+  {image(poluted_inside, 350, 245); //<>//
+   led = color(0,255,0);
+   line = color(255,255);
+    buton_on_off = color(255,255,255);
+  switcer = true;} //<>// //<>//
+  
+  test1 = ""+rezultat+"";
+  test1 = test1.trim();
+  
+  if(test1.equals("Calitatea aerului din exterior este rea"))
+  {
+  led = color(255,0,0);
+  buton_on_off = color(0,0,0);
+  line = color(0,0);
+  switcer = false;
+  }
 }
+
 }  //<>//
 void mousePressed() {
 
