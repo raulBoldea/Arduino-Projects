@@ -1,4 +1,4 @@
-import processing.serial.*;
+import processing.serial.*; //<>// //<>// //<>// //<>// //<>// //<>// //<>// //<>// //<>// //<>// //<>// //<>// //<>//
 
 Serial myPort;
 PImage bg,normal,poluted_inside,poluted_outside;
@@ -96,24 +96,24 @@ void draw()
     
     if(test.equals("Calitatea aerului din incapere este periculoasa !")) //<>//
     { //<>//
-      windowState = "Geamul este deschis";
-      image(poluted_inside, 678, 380);
       led = color(0,255,0);
       line = color(255,255);
       buton_on_off = color(255,255,255);
       switcer = true; //<>//
+      windowState = "Geamul este deschis";
+      image(poluted_inside, 678, 380);
     } //<>// 
     test1 = ""+rezultat+"";
     test1 = test1.trim();
 
     if(test1.equals("Calitatea aerului din exterior este rea"))
     {
-      windowState = "Geamul este inchis";
-      image(poluted_outside, 678, 380);
       led = color(255,0,0);
       buton_on_off = color(0,0,0);
       line = color(0,0);
       switcer = false;
+      windowState = "Geamul este inchis";
+      image(poluted_outside, 678, 380);
     }
   }
 } //<>//
