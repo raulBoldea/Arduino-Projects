@@ -122,7 +122,7 @@ void loop(void)
       state = false;
       digitalWrite(forwards, LOW);
       digitalWrite(backwards, HIGH);//Activate the relay one direction, they must be different to move the motor
-      Serial.println("One way");
+//      Serial.println("One way");
       delay(3000); // wait 3 seconds
       Count = 0;
       digitalWrite(forwards, HIGH);
@@ -154,7 +154,7 @@ void loop(void)
       digitalWrite(backwards, HIGH);
        state = false;
       }
-      Serial.println(input);
+//      Serial.println(input);
 
 //  delay(7000);
 //  digitalWrite(LED, LOW);

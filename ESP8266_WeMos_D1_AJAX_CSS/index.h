@@ -8,21 +8,25 @@ const char MAIN_page[] PROGMEM = R"=====(
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
 <script>
 var valoareBec = 0;
-
+var thisIsSwitch = 0;
 $(document).ready(function(){
   $('#button').click(function(){
+    if(thisIsSwitch == 1)
+    {
     $(this).toggleClass('on');
+    }
   if(valoareBec == 0)
     {
     valoareBec = 1;
     $(this).attr("onclick",sendData(valoareBec));
-    console.log(valoareBec);
+//    console.log(valoareBec);
     }
     else 
   {
     valoareBec = 0;
     $(this).attr("onclick",sendData(valoareBec));
-    console.log(valoareBec);} 
+//    console.log(valoareBec);
+} 
   });
 });
 </script>
@@ -151,6 +155,7 @@ button.on + span {
     <div class ="text-center" style="color:white;">
     <br>
     ADC Value is : <span id="ADCValue">0</span><br>
+    Switch value is : <span id ="Switcher">NA</span>
     LED State is : <span id="LEDState">NA</span>
   </div>
 <script>
@@ -169,10 +174,12 @@ function sendData(led) {
 setInterval(function() {
   // Call a function repetatively with 2 Second interval
   getData();
-}, 2000); //2000mSeconds update rate
+  getData1();
+}, 500); //2000mSeconds update rate
 
 function getData() {
   var xhttp = new XMLHttpRequest();
+//  console.log(xhttp);
   xhttp.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
       document.getElementById("ADCValue").innerHTML =
@@ -180,6 +187,20 @@ function getData() {
     }
   };
   xhttp.open("GET", "readADC", true);
+  xhttp.send();
+}
+function getData1() {
+  var xhttp = new XMLHttpRequest();
+//  console.log(xhttp);
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      document.getElementById("Switcher").innerHTML =
+      this.responseText;
+      thisIsSwitch = this.responseText;
+    }
+  };
+  console.log("The switch value is : " + thisIsSwitch );
+  xhttp.open("GET", "readSwitch", true);
   xhttp.send();
 }
 </script>

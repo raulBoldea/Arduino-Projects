@@ -10,10 +10,14 @@
 #include "index.h" //Our HTML webpage contents with AJAX and jQuery
 
 #define LED D5  //use Digital Output No. 5 from board
-
+#define SWITCH D6  //use Digital Output No. 5 for switch
+#define Jos D4 // read value from D7
+int inputPin = D3;
+int val1 = 0, val2 = 0;
+bool state = true;
 //SSID and Password of your WiFi router
-const char* ssid = "blank";
-const char* password = "blank";
+const char* ssid = "!";
+const char* password = "frigider";
 
 ESP8266WebServer server(80); //Server on port 80
 
@@ -30,14 +34,20 @@ void handleADC() // functon to read if there is voltage on board
   int a = analogRead(A0); 
   String adcValue = String(a);
   server.send(200, "text/plane", adcValue); //Send ADC value only to client ajax request
+//  server.send(200, "text/plane", switchValue);
 }
 
+void handleSwitch()
+{
+  int noua = 99;
+  String switcher = String(val1);
+  server.send(200,"text/plane",switcher);
+  }
 void handleLED() //function to handle the HIGH and the LOW part of the LED;
 {
   String ledState = "OFF"; // we defined a string, which show us the current status of the led on our webpage;
   String t_state = server.arg("LEDstate"); //Refer  xhttp.open("GET", "setLED?LEDstate="+led, true);
   Serial.println(t_state);//we are printing the state of the led inside Serial Monitor
- 
   if(t_state == "1")
   {
     digitalWrite(LED,LOW); //LED ON
@@ -69,7 +79,11 @@ void setup(void)
   //Onboard LED port Direction output
   digitalWrite(LED,1); // since we're using an Relay which is activated in Low Power Mode, we're setting the value to 1, so it start closed;
   pinMode(LED,OUTPUT); 
-  
+  pinMode(SWITCH,OUTPUT);
+  pinMode(SWITCH,HIGH);
+  pinMode(BUILTIN_LED,OUTPUT);
+  pinMode(inputPin,INPUT);
+  pinMode(Jos,INPUT);
   // Wait for connection
   while (WiFi.status() != WL_CONNECTED) 
   {
@@ -87,7 +101,8 @@ void setup(void)
   server.on("/", handleRoot);      //Which routine to handle at root location. This is display page
   server.on("/setLED", handleLED);
   server.on("/readADC", handleADC);
-
+  server.on("/readSwitch", handleSwitch);
+  
   server.begin();                  //Start server
   Serial.println("HTTP server started");
 }
@@ -96,5 +111,22 @@ void setup(void)
 //==============================================================
 void loop(void){
   server.handleClient();          //Handle client requests
-
+  
+  val1 = digitalRead(inputPin);
+  digitalWrite(BUILTIN_LED,val1);
+//  Serial.println(val1);
+//  val2 = digitalRead(Jos);
+//  digitalWrite(SWITCH,HIGH);
+  if(val1 == HIGH && state == true)
+  {
+    Serial.println("Intrerupator actionat in sus");
+    Serial.println(val1);
+    state = false;
+    }
+    else if (val1 == LOW && state == false)
+    {
+      Serial.println("Intrerupator actionat in jos");
+      Serial.println(val1);
+      state = true;
+      }
 }
