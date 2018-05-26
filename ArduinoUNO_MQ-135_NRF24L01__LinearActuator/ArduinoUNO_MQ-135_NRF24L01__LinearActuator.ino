@@ -97,21 +97,21 @@ void loop(void)
   }
   else if(Co2Ppm > 500 && senzorData < 500) 
   {
-    Serial.println("Calitatea aerului din incapere este periculoasa !");
     Count++;
+    Serial.println("Calitatea aerului din incapere este periculoasa!");
     if(Count == 10)
     {
-        if(state == false)
-        {
-          Count = 0;
-          digitalWrite(forwards, HIGH);
-          digitalWrite(backwards, LOW);//Activate the relay the other direction, they must be different to move the motor
-          delay(3000);// wait 3 seconds
-          state = true;
-          Serial.println("Calitatea aerului din incapere este periculoasa  !");
-          digitalWrite(forwards, HIGH);
-          digitalWrite(backwards, HIGH);//Deactivate both relays to brake the motor
-        }
+      if(state == false)
+      {
+        Count = 0;
+        digitalWrite(forwards, HIGH);
+        digitalWrite(backwards, LOW);//Activate the relay the other direction, they must be different to move the motor
+        delay(3000);// wait 3 seconds
+        state = true;
+        Serial.println("Calitatea aerului din incapere este periculoasa !");
+        digitalWrite(forwards, HIGH);
+        digitalWrite(backwards, HIGH);//Deactivate both relays to brake the motor
+      }
     }
   }
   else if (senzorData > 500)

@@ -41,20 +41,20 @@ void draw()
     fill(255);
     rect(120, 50, 1100, 660, 12);
     fill(0);
-    text("AiRMechatronics",510,110);
+    text("AiRMechatronics",530,110);
     fill(0);
     textSize(14);
     text("© Raul Boldea - Universitatea \"1 Decembrie 1918\" Alba-Iulia",828,700);
     fill(58,208,216,80);
-    rect(470, 280, 450, 180, 12);
+    rect(470, 280, 460, 180, 12);
     fill(0);
     textSize(20);
-    text("Interfata pentru monitorizarea calitatii aerului",490,320);
+    text("Interfata pentru monitorizarea calitatii aerului",480,320);
     fill(0);
     text(windowState,610,450);
     fill(0);
     text("Buton pentru inchidere / deschidere geam",500,650);
-    text(""+rezultat,490,360); //<>//
+    text(""+rezultat,480,360); //<>//
     //println(); //<>//
     ellipse(700, 550, 104, 104);
     fill(40,40,40);
@@ -82,21 +82,22 @@ void draw()
       {
         image(normal, 678, 380);
       }
-      else if(val1.equals("Calitatea aerului din incapere este periculoasa !"))
+      else if(val1.equals("Calitatea aerului din incapere este periculoasa!"))
       {
         image(poluted_inside, 678, 380);
       }
-      else if(val1.equals("Second way"))
-      {
-        println("triggerd");
-      }
+      //else if(val1.equals("Second way"))
+      //{
+      //  println("triggerd");
+      //}
     }
     test = ""+rezultat+""; //<>//
     test = test.trim(); //<>//
     
-    if(test.equals("Calitatea aerului din incapere este periculoasa  !")) //<>//
+    if(test.equals("Calitatea aerului din incapere este periculoasa !")) //<>//
     { //<>//
-      image(poluted_inside, 350, 245);
+      windowState = "Geamul este deschis";
+      image(poluted_inside, 678, 380);
       led = color(0,255,0);
       line = color(255,255);
       buton_on_off = color(255,255,255);
@@ -107,6 +108,7 @@ void draw()
 
     if(test1.equals("Calitatea aerului din exterior este rea"))
     {
+      windowState = "Geamul este inchis";
       image(poluted_outside, 678, 380);
       led = color(255,0,0);
       buton_on_off = color(0,0,0);
