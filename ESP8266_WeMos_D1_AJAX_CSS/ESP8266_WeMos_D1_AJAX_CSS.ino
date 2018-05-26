@@ -16,8 +16,8 @@ int inputPin = D3;
 int val1 = 0, val2 = 0;
 bool state = true;
 //SSID and Password of your WiFi router
-const char* ssid = "!";
-const char* password = "frigider";
+const char* ssid = "blank";
+const char* password = "blank";
 
 ESP8266WebServer server(80); //Server on port 80
 
