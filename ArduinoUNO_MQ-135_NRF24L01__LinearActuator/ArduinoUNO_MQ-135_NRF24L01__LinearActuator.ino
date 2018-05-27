@@ -99,19 +99,22 @@ void loop(void)
   {
     Serial.println("Calitatea aerului din incapere este periculoasa !");
     Count++;
-    if(Count == 10)
+    if(state == false)
     {
-        if(state == false)
-        {
-          Count = 0;
+      if(Count == 10)
+      {
+           Count = 0;
           digitalWrite(forwards, HIGH);
           digitalWrite(backwards, LOW);//Activate the relay the other direction, they must be different to move the motor
           delay(3000);// wait 3 seconds
+
           state = true;
-          Serial.println("Calitatea aerului din incapere este periculoasa  !");
           digitalWrite(forwards, HIGH);
           digitalWrite(backwards, HIGH);//Deactivate both relays to brake the motor
-        }
+                  Serial.println("Calitatea aerului din incapere este periculoasa  !");
+          Serial.println("Calitatea aerului din incapere este periculoasa !");
+
+                  }
     }
   }
   else if (senzorData > 500)
@@ -130,7 +133,7 @@ void loop(void)
     }
     
   }
-  delay(500);
+  delay(1100);
     if (Serial.available())
   {
     input = Serial.parseInt();
