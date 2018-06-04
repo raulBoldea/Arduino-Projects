@@ -9,7 +9,7 @@ const char MAIN_page[] PROGMEM = R"=====(
 <script>
 var valoareBec = 0;
 var thisIsSwitch = 0;
-var someBullshit = false;
+var boolForState = false;
 $(document).ready(function(){
   $('#button').click(function(){
     $(this).toggleClass('on');
@@ -198,24 +198,24 @@ function getData1() {
       document.getElementById("Switcher").innerHTML =
       this.responseText;
       thisIsSwitch = this.responseText;
-      console.log(someBullshit);
+      console.log(boolForState);
       if(thisIsSwitch == 1)
       {
-        if(someBullshit == false){
+        if(boolForState == false){
         $('#button').toggleClass('on');
         console.log("Triggerd");
 //         $('#button').attr("onclick",sendData(thisIsSwitch));
-        someBullshit = true;
+        boolForState = true;
         }
         }
         else if( thisIsSwitch == 0)
         {
-          if(someBullshit == true)
+          if(boolForState == true)
           {
           $('#button').toggleClass();
 //          $('#button').attr("onclick",sendData(thisIsSwitch));
   
-          someBullshit = false;
+          boolForState = false;
           }
         }
     }
