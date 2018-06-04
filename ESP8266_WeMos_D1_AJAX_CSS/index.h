@@ -9,18 +9,16 @@ const char MAIN_page[] PROGMEM = R"=====(
 <script>
 var valoareBec = 0;
 var thisIsSwitch = 0;
+var someBullshit = false;
 $(document).ready(function(){
   $('#button').click(function(){
-    if(thisIsSwitch == 1)
-    {
     $(this).toggleClass('on');
-    }
-  if(valoareBec == 0)
+    if(valoareBec == 0)
     {
     valoareBec = 1;
     $(this).attr("onclick",sendData(valoareBec));
-//    console.log(valoareBec);
-    }
+    console.log(valoareBec);
+  }
     else 
   {
     valoareBec = 0;
@@ -29,6 +27,9 @@ $(document).ready(function(){
 } 
   });
 });
+function homalau(){
+  
+  }
 </script>
 <style>
 body {
@@ -197,6 +198,26 @@ function getData1() {
       document.getElementById("Switcher").innerHTML =
       this.responseText;
       thisIsSwitch = this.responseText;
+      console.log(someBullshit);
+      if(thisIsSwitch == 1)
+      {
+        if(someBullshit == false){
+        $('#button').toggleClass('on');
+        console.log("Triggerd");
+//         $('#button').attr("onclick",sendData(thisIsSwitch));
+        someBullshit = true;
+        }
+        }
+        else if( thisIsSwitch == 0)
+        {
+          if(someBullshit == true)
+          {
+          $('#button').toggleClass();
+//          $('#button').attr("onclick",sendData(thisIsSwitch));
+  
+          someBullshit = false;
+          }
+        }
     }
   };
   console.log("The switch value is : " + thisIsSwitch );

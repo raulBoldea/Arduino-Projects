@@ -77,7 +77,6 @@ void draw()
     {
       val1=""+rezultat+"";
       val1=val1.trim();
-      i++;
       if(val1.equals("Calitatea aerului este la valori normale"))
       {
         image(normal, 678, 380);
@@ -86,29 +85,28 @@ void draw()
       {
         image(poluted_inside, 678, 380);
       }
-      //else if(val1.equals("Second way"))
-      //{
-      //  println("triggerd");
-      //}
+      else if(val1.equals("Calitatea aerului din exterior este rea!"))
+      {
+        image(poluted_outside, 678, 380);
+      }
+
     }
     test = ""+rezultat+""; //<>//
     test = test.trim(); //<>//
     
     if(test.equals("Calitatea aerului din incapere este periculoasa  !")) //<>//
     { //<>//
-      onButton(); //<>//
+      onButton();
+      image(poluted_inside, 678, 380);
+ //<>//
     } //<>// 
     test1 = ""+rezultat+"";
     test1 = test1.trim();
 
-    if(test1.equals("Calitatea aerului din exterior este rea"))
+    if(test1.equals("Calitatea aerului din exterior este rea !"))
     {
-      windowState = "Geamul este inchis";
+      ofButton();
       image(poluted_outside, 678, 380);
-      led = color(255,0,0);
-      buton_on_off = color(0,0,0);
-      line = color(0,0);
-      switcer = false;
     }
   }
 } //<>//
@@ -126,21 +124,13 @@ boolean overCircle(int x, int y, int diameter)
   {
     if(switcer == true)
     { //<>//
-       windowState = "Geamul este inchis";
-       led = color(255,0,0);
        myPort.write("2");
-       buton_on_off = color(0,0,0);
-       line = color(0,0);
-       switcer = false;
+       ofButton();  
     } 
     else if(switcer == false)
     {
-       windowState = "Geamul este deschis";
-       led = color(0,255,0);
        myPort.write("1");
-       line = color(255,255);
-       buton_on_off = color(255,255,255);
-       switcer = true;
+       onButton();
     }
     return true;
   } 
@@ -152,10 +142,17 @@ boolean overCircle(int x, int y, int diameter)
 void onButton()
 {
       windowState = "Geamul este deschis";
-      image(poluted_inside, 678, 380);
       led = color(0,255,0);
       line = color(255,255);
       buton_on_off = color(255,255,255);
       switcer = true;
+}
+void ofButton()
+{
+       windowState = "Geamul este inchis";
+       led = color(255,0,0);
+       buton_on_off = color(0,0,0);
+       line = color(0,0);
+       switcer = false;
 }
 //<>// //<>// //<>// //<>// //<>// //<>//
