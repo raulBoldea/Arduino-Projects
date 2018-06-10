@@ -9,10 +9,12 @@ const char MAIN_page[] PROGMEM = R"=====(
 <script>
 var valoareBec = 0;
 var thisIsSwitch = 0;
+var aGlobal = 0;
 var boolForState = false;
+var aGlobalState2 = false;
 $(document).ready(function(){
   $('#button').click(function(){
-    $(this).toggleClass('on');
+//    $(this).toggleClass('on');
     if(valoareBec == 0)
     {
     valoareBec = 1;
@@ -27,9 +29,6 @@ $(document).ready(function(){
 } 
   });
 });
-function homalau(){
-  
-  }
 </script>
 <style>
 body {
@@ -185,6 +184,26 @@ function getData() {
     if (this.readyState == 4 && this.status == 200) {
       document.getElementById("ADCValue").innerHTML =
       this.responseText;
+      aGlobal = this.responseText;
+        console.log("aGlobal value" + aGlobal);
+      if(aGlobal == 1)
+      {
+        if(aGlobalState2 == false)
+        {
+          $('#button').toggleClass('on');
+          console.log("triggered1");
+          aGlobalState2 = true;
+        }
+       }
+        else if (aGlobal == 0)
+        {
+          if(aGlobalState2 == true)
+          {
+          console.log("triggered2");
+          $('#button').toggleClass();
+          aGlobalState2 = false;
+          }
+        }
     }
   };
   xhttp.open("GET", "readADC", true);
@@ -198,7 +217,7 @@ function getData1() {
       document.getElementById("Switcher").innerHTML =
       this.responseText;
       thisIsSwitch = this.responseText;
-      console.log(boolForState);
+//      console.log(boolForState);
       if(thisIsSwitch == 1)
       {
         if(boolForState == false){

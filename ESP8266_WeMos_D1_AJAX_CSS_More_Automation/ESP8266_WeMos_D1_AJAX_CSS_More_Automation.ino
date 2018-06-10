@@ -6,22 +6,24 @@
 #include <ESP8266WiFi.h> // use ESP8266WiFi.h header
 #include <WiFiClient.h>// use WiFiClient.h header
 #include <ESP8266WebServer.h> // useESP8266WebServer.h
+#include <SPI.h>
 
 #include "index.h" //Our HTML webpage contents with AJAX and jQuery
-
 #define LED D5  //use Digital Output No. 5 from board
 #define SWITCH D6  //use Digital Output No. 5 for switch
 #define Jos D4 // read value from D7
+char Gserver[] = "smtp.gmail.com";
+int port = 465;
 int inputPin = D3;
 int val1 = 0, val2 = 0;
 bool state = true;
 String t_state ="";
 //SSID and Password of your WiFi router
-const char* ssid = "@rea";
-const char* password = "laborator51";
+const char* ssid = "@pass";
+const char* password = "@@!@!";
 
 ESP8266WebServer server(80); //Server on port 80
-
+WiFiClientSecure client;
 //===============================================================
 // The following routine is executed when you open its IP in browser
 //===============================================================
@@ -79,7 +81,8 @@ void setup(void)
 
   //Onboard LED port Direction output
   digitalWrite(LED,1); // since we're using an Relay which is activated in Low Power Mode, we're setting the value to 1, so it start closed;
-  pinMode(LED,OUTPUT); 
+  pinMode(LED,OUTPUT);
+  sendEmail(); 
   pinMode(SWITCH,OUTPUT);
   pinMode(SWITCH,HIGH);
   pinMode(BUILTIN_LED,OUTPUT);
@@ -98,7 +101,8 @@ void setup(void)
   Serial.println(ssid);
   Serial.print("IP address: ");
   Serial.println(WiFi.localIP());  //IP address assigned to your ESP
- 
+  if(sendEmail()) Serial.println(F("Email sent"));
+      else Serial.println(F("Email failed"));
   server.on("/", handleRoot);      //Which routine to handle at root location. This is display page
   server.on("/setLED", handleLED);
   server.on("/readADC", handleADC);
@@ -130,4 +134,149 @@ void loop(void){
       Serial.println(val1);
       state = true;
       }
+}
+
+byte sendEmail()
+{
+  byte thisByte = 0;
+  byte respCode;
+
+  if(client.connect(Gserver,port) == 1) {
+    Serial.println(F("connected 1"));
+  } else {
+    Serial.println(F("connection failed"));
+    return 0;
+  }
+
+  if(!eRcv()) return 0;
+
+  Serial.println(F("Sending hello"));
+// replace 1.2.3.4 with your Arduino's ip
+  client.println("EHLO 192.168.1.10");
+  if(!eRcv()) return 0;
+
+  Serial.println(F("Sending auth login"));
+  client.println("auth login");
+  if(!eRcv()) return 0;
+
+  Serial.println(F("Sending User"));
+// Change to your base64 encoded user
+  client.println("gmailuser");     //my user name
+
+  if(!eRcv()) return 0;
+
+  Serial.println(F("Sending Password"));
+// change to your base64 encoded password
+  client.println("gmailpassword");     //password
+
+  if(!eRcv()) return 0;
+
+// change to your email address (sender)
+  Serial.println(F("Sending From"));
+  client.println("MAIL From: <@gmail.com>");
+  if(!eRcv()) return 0;
+
+// change to recipient address
+  Serial.println(F("Sending To"));
+  client.println("RCPT To: <@gmail.com>");
+  if(!eRcv()) return 0;
+
+  Serial.println(F("Sending DATA"));
+  client.println("DATA");
+  if(!eRcv()) return 0;
+
+  Serial.println(F("Sending email"));
+
+// change to recipient address
+  client.println("<@gmail.com>");
+
+// change to your address
+//  client.println("From: Me <@gmail.com>");
+
+//  client.println("Subject: Arduino email test\r\n");
+
+  client.println("This is from my Arduino!:" + WiFi.localIP().toString());
+
+  client.println(".");
+
+  if(!eRcv()) return 0;
+
+  Serial.println(F("Sending QUIT"));
+  client.println("QUIT");
+  if(!eRcv()) return 0;
+
+  client.stop();
+
+  Serial.println(F("disconnected"));
+
+  return 1;
+}
+
+byte eRcv()
+{
+  byte respCode;
+  byte thisByte;
+  int loopCount = 0;
+
+  while(!client.available()) {
+    delay(1);
+//    Serial.println("Client not available");
+    loopCount++;
+
+    // if nothing received for 10 seconds, timeout
+    if(loopCount > 20000) {
+      
+      client.stop();
+      Serial.println(F("\r\nTimeout"));
+      return 0;
+    }
+  }
+
+  respCode = client.peek();
+
+  while(client.available())
+  {  
+    thisByte = client.read();    
+    Serial.write(thisByte);
+  }
+
+  if(respCode >= '4')
+  {
+    efail();
+    return 0;  
+  }
+
+  return 1;
+}
+
+
+void efail()
+{
+  byte thisByte = 0;
+  int loopCount = 0;
+
+  client.println(F("QUIT"));
+
+  while(!client.available()) {
+    delay(1);
+    loopCount++;
+
+    // if nothing received for 10 seconds, timeout
+    if(loopCount > 100000) {
+      Serial.println("Second while");
+      client.stop();
+      Serial.println(F("\r\nTimeout"));
+      return;
+    }
+  }
+
+  while(client.available())
+  {  
+    thisByte = client.read();    
+    Serial.write(thisByte);
+  }
+
+  client.stop();
+
+  Serial.println(F("disconnected"));
 }
