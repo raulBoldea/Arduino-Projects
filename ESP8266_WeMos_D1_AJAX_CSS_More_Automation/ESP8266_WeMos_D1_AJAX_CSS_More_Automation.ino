@@ -7,42 +7,41 @@
 #include <WiFiClient.h>// use WiFiClient.h header
 #include <ESP8266WebServer.h> // useESP8266WebServer.h
 #include <SPI.h>
-
 #include "index.h" //Our HTML webpage contents with AJAX and jQuery
-#define LED D5  //use Digital Output No. 5 from board
-#define SWITCH D6  //use Digital Output No. 5 for switch
-#define Jos D4 // read value from D7
-char Gserver[] = "smtp.gmail.com";
-int port = 465;
-int inputPin = D3;
-int val1 = 0, val2 = 0;
-bool state = true;
-String t_state ="";
-//SSID and Password of your WiFi router
-const char* ssid = "@pass";
-const char* password = "@@!@!";
 
-ESP8266WebServer server(80); //Server on port 80
-WiFiClientSecure client;
+#define LED D5  //use Digital Output No. 5 from board to switch relay state
+#define SWITCH D6  //use Digital Output No. 6 for switch / control inpot of D3
+
+int inputPin = D3; // pin which read the value from D6 this can have two states 0 or 1;
+int val1 = 0; // later store the value from D3;
+bool state = true; // a boolean to handle the val1 value;
+
+String t_state =""; // a string to handle the led state inside the interface
+
+const char* ssid = "SSID"; // the value of SSID to access the router;
+const char* password = "PASSWORD"; // the password to access the router;
+char Gserver[] = "smtp.gmail.com"; // value to can access smtp from Gmail;
+int port = 465; // the port where the mail server can be accessed
+
+ESP8266WebServer server(80); //create a new Server on port 80
+WiFiClientSecure client; // create a new WiFiClient to handle the email triggering
 //===============================================================
-// The following routine is executed when you open its IP in browser
+
+// The following functions are executed when we're accessing the IP inside browser
+
 //===============================================================
-void handleRoot() {
- String s = MAIN_page; //Read HTML contents
+void handleRoot() { //the function which runs first
+ String s = MAIN_page; //Read HTML contents by accessing the value from MAIN_page which is defined inside index.h
  server.send(200, "text/html", s); //Send web page
 }
 
-void handleADC() // functon to read if there is voltage on board 
+void handleADC() // function which handle the interface when the button is pressed
 {
-  int a = analogRead(A0); 
-  String adcValue = String(a);
   server.send(200, "text/plane", t_state); //Send ADC value only to client ajax request
-//  server.send(200, "text/plane", switchValue);
 }
 
-void handleSwitch()
+void handleSwitch()  // function which handle the interface when the switcher is pressed
 {
-  int noua = 99;
   String switcher = String(val1);
   server.send(200,"text/plane",switcher);
   }
@@ -68,11 +67,12 @@ void handleLED() //function to handle the HIGH and the LOW part of the LED;
 //==============================================================
 void setup(void)
 {
-  Serial.begin(115200);
+  Serial.begin(115200); // begin to listen to Serial on 115200
   
-  WiFi.begin(ssid,password);     //Connect to your WiFi router
+  WiFi.begin(ssid,password);     //Connect to our WiFi router
 
-  Serial.println(WiFi.localIP());
+  Serial.println(WiFi.localIP()); // print the Ip on Serial
+  sendEmail(); // call the email function, to send the Ip address to a user when
 //  IPAddress ip(192,168,1,99); // set an StaticIp Address in order to not look for IP all the times
 //  IPAddress gateway(192,168,1,254); // set the Gateway
 //  IPAddress subnet(255,255,255,0); // set the Subnet Mask
@@ -81,18 +81,15 @@ void setup(void)
 
   //Onboard LED port Direction output
   digitalWrite(LED,1); // since we're using an Relay which is activated in Low Power Mode, we're setting the value to 1, so it start closed;
-  pinMode(LED,OUTPUT);
-  sendEmail(); 
-  pinMode(SWITCH,OUTPUT);
-  pinMode(SWITCH,HIGH);
-  pinMode(BUILTIN_LED,OUTPUT);
-  pinMode(inputPin,INPUT);
-  pinMode(Jos,INPUT);
+  pinMode(LED,OUTPUT); // set the LED as OUTPUT, this handles the In value from Relay
+  pinMode(SWITCH,OUTPUT); // set SWITCH as an OUTPUT
+  pinMode(SWITCH,HIGH); // turn SWITCH value to HIGH or 1. All the time this value is high, so we can read it to our switch
+  pinMode(inputPin,INPUT); //read the value from SWITCH, all the time DC pass through a real switch and if the conection is closed, this reads 1
   // Wait for connection
   while (WiFi.status() != WL_CONNECTED) 
   {
     delay(500);
-    Serial.print(".");
+    Serial.print("."); // print ... until the connection is made
   }
 
   //If connection successful show IP address in serial monitor
@@ -101,8 +98,8 @@ void setup(void)
   Serial.println(ssid);
   Serial.print("IP address: ");
   Serial.println(WiFi.localIP());  //IP address assigned to your ESP
-  if(sendEmail()) Serial.println(F("Email sent"));
-      else Serial.println(F("Email failed"));
+  if(sendEmail()) Serial.println(F("Email sent"));//if the email is send succesfully, we print a message inside serial
+  else Serial.println(F("Email failed"));//else we print Email failed
   server.on("/", handleRoot);      //Which routine to handle at root location. This is display page
   server.on("/setLED", handleLED);
   server.on("/readADC", handleADC);
@@ -117,11 +114,7 @@ void setup(void)
 void loop(void){
   server.handleClient();          //Handle client requests
   
-  val1 = digitalRead(inputPin);
-  digitalWrite(BUILTIN_LED,val1);
-//  Serial.println(val1);
-//  val2 = digitalRead(Jos);
-//  digitalWrite(SWITCH,HIGH);
+  val1 = digitalRead(inputPin);//read the value from inputPin(D3)
   if(val1 == HIGH && state == true)
   {
     Serial.println("Intrerupator actionat in sus");
@@ -136,7 +129,7 @@ void loop(void){
       }
 }
 
-byte sendEmail()
+byte sendEmail() // sendEmail functions, this is triggered inside Setup function
 {
   byte thisByte = 0;
   byte respCode;

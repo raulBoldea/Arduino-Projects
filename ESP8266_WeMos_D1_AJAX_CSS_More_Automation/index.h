@@ -12,23 +12,7 @@ var thisIsSwitch = 0;
 var aGlobal = 0;
 var boolForState = false;
 var aGlobalState2 = false;
-$(document).ready(function(){
-  $('#button').click(function(){
-//    $(this).toggleClass('on');
-    if(valoareBec == 0)
-    {
-    valoareBec = 1;
-    $(this).attr("onclick",sendData(valoareBec));
-    console.log(valoareBec);
-  }
-    else 
-  {
-    valoareBec = 0;
-    $(this).attr("onclick",sendData(valoareBec));
-//    console.log(valoareBec);
-} 
-  });
-});
+
 </script>
 <style>
 body {
@@ -163,8 +147,6 @@ function sendData(led) {
   var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
-      document.getElementById("LEDState").innerHTML =
-      this.responseText;
     }
   };
   xhttp.open("POST", "setLED?LEDstate="+led, true);
@@ -184,22 +166,26 @@ function getData() {
     if (this.readyState == 4 && this.status == 200) {
       document.getElementById("ADCValue").innerHTML =
       this.responseText;
+            document.getElementById("LEDState").innerHTML =
+      this.responseText;
       aGlobal = this.responseText;
-        console.log("aGlobal value" + aGlobal);
+//        console.log("aGlobal value" + aGlobal);
       if(aGlobal == 1)
       {
+        valoareBec = 1;
         if(aGlobalState2 == false)
         {
           $('#button').toggleClass('on');
-          console.log("triggered1");
+//          console.log("triggered1");
           aGlobalState2 = true;
         }
        }
         else if (aGlobal == 0)
         {
+          valoareBec = 0;
           if(aGlobalState2 == true)
           {
-          console.log("triggered2");
+//          console.log("triggered2");
           $('#button').toggleClass();
           aGlobalState2 = false;
           }
@@ -222,7 +208,7 @@ function getData1() {
       {
         if(boolForState == false){
         $('#button').toggleClass('on');
-        console.log("Triggerd");
+//        console.log("Triggerd");
 //         $('#button').attr("onclick",sendData(thisIsSwitch));
         boolForState = true;
         }
@@ -239,10 +225,27 @@ function getData1() {
         }
     }
   };
-  console.log("The switch value is : " + thisIsSwitch );
+//  console.log("The switch value is : " + thisIsSwitch );
   xhttp.open("GET", "readSwitch", true);
   xhttp.send();
 }
+$(document).ready(function(){
+  $('#button').click(function(){
+//    $(this).toggleClass('on');
+    if(valoareBec == 0)
+    {
+    valoareBec = 1;
+    $(this).attr("onclick",sendData(valoareBec));
+//    console.log(valoareBec);
+  }
+    else 
+  {
+    valoareBec = 0;
+    $(this).attr("onclick",sendData(valoareBec));
+//    console.log(valoareBec);
+} 
+  });
+});
 </script>
 </body>
 </html>
