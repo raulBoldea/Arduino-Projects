@@ -15,9 +15,10 @@
 int inputPin = D3;
 int val1 = 0, val2 = 0;
 bool state = true;
+String t_state ="";
 //SSID and Password of your WiFi router
-const char* ssid = "@";
-const char* password = "laborator5";
+const char* ssid = "@rea";
+const char* password = "laborator51";
 
 ESP8266WebServer server(80); //Server on port 80
 
@@ -33,7 +34,7 @@ void handleADC() // functon to read if there is voltage on board
 {
   int a = analogRead(A0); 
   String adcValue = String(a);
-  server.send(200, "text/plane", adcValue); //Send ADC value only to client ajax request
+  server.send(200, "text/plane", t_state); //Send ADC value only to client ajax request
 //  server.send(200, "text/plane", switchValue);
 }
 
@@ -46,7 +47,7 @@ void handleSwitch()
 void handleLED() //function to handle the HIGH and the LOW part of the LED;
 {
   String ledState = "OFF"; // we defined a string, which show us the current status of the led on our webpage;
-  String t_state = server.arg("LEDstate"); //Refer  xhttp.open("GET", "setLED?LEDstate="+led, true);
+  t_state = server.arg("LEDstate"); //Refer  xhttp.open("GET", "setLED?LEDstate="+led, true);
   Serial.println(t_state);//we are printing the state of the led inside Serial Monitor
   if(t_state == "1")
   {

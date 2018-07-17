@@ -10,6 +10,7 @@ const char MAIN_page[] PROGMEM = R"=====(
 var valoareBec = 0;
 var thisIsSwitch = 0;
 var aGlobal = 0;
+var intrerupator = 0;
 var boolForState = false;
 var aGlobalState2 = false;
 
@@ -130,66 +131,71 @@ button.on + span {
 </style>
 </head>
 <body>
-<h1 class="text-center" style="color:white; margin-bottom:40px;">ESP8266 NODEMCU Light Bulb!</h1>
+<h1 class="text-center" style="color:white; margin-bottom:40px;">Smart Home Automation for Light!</h1>
 
 <section>
     <button id="button">&#xF011;</button>
     <span></span>
-  </section>
-    <div class ="text-center" style="color:white;">
+</section>
+<div class ="text-center" style="color:white;">
     <br>
-    ADC Value is : <span id="ADCValue">0</span><br>
-    Switch value is : <span id ="Switcher">NA</span>
-    LED State is : <span id="LEDState">NA</span>
-  </div>
+    
+    Starea intrerupatorului : <span id ="Switcher">NA</span>
+    Starea releului: <span id="RELAYState">NA</span>
+</div>
 <script>
-function sendData(led) {
+
+
+function sendData(releu) {
   var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
     }
   };
-  xhttp.open("POST", "setLED?LEDstate="+led, true);
+  xhttp.open("POST", "setRELAY?RELAYstate="+releu, true);
   xhttp.send();
 }
 
 setInterval(function() {
-  // Call a function repetatively with 2 Second interval
+  // Apelarea repetată a funcțiilor la interval de jumătate de secundă
   getData();
   getData1();
-}, 500); //2000mSeconds update rate
+}, 500); //500 milliseconds
 
 function getData() {
   var xhttp = new XMLHttpRequest();
-//  console.log(xhttp);
   xhttp.onreadystatechange = function() {
-    if (this.readyState == 4 && this.status == 200) {
-      document.getElementById("ADCValue").innerHTML =
-      this.responseText;
-            document.getElementById("LEDState").innerHTML =
-      this.responseText;
-      aGlobal = this.responseText;
-//        console.log("aGlobal value" + aGlobal);
-      if(aGlobal == 1)
+  if (this.readyState == 4 && this.status == 200) 
+  {
+    document.getElementById("RELAYState").innerHTML = this.responseText;
+    aGlobal = this.responseText;
+    if(aGlobal == 1)
+    {
+      valoareBec = 1;
+      if(aGlobalState2 == false)
+      { 
+        $('#button').toggleClass('on');
+        aGlobalState2 = true;
+      }
+    }
+    else if (intrerupator == 0 && aGlobal == 0)
+    {
+      valoareBec = 0;
+      if(aGlobalState2 == true)
       {
-        valoareBec = 1;
-        if(aGlobalState2 == false)
-        {
-          $('#button').toggleClass('on');
-//          console.log("triggered1");
-          aGlobalState2 = true;
-        }
-       }
-        else if (aGlobal == 0)
-        {
-          valoareBec = 0;
-          if(aGlobalState2 == true)
-          {
-//          console.log("triggered2");
-          $('#button').toggleClass();
-          aGlobalState2 = false;
-          }
-        }
+        $('#button').toggleClass();
+        aGlobalState2 = false;
+      }
+    }
+    else if (intrerupator == 1 && aGlobal == 0)
+    {
+      valoareBec = 0;
+      if(aGlobalState2 == true)
+      {
+        $('#button').toggleClass('on');
+        aGlobalState2 = false;
+      }
+     }
     }
   };
   xhttp.open("GET", "readADC", true);
@@ -197,53 +203,46 @@ function getData() {
 }
 function getData1() {
   var xhttp = new XMLHttpRequest();
-//  console.log(xhttp);
   xhttp.onreadystatechange = function() {
-    if (this.readyState == 4 && this.status == 200) {
-      document.getElementById("Switcher").innerHTML =
-      this.responseText;
-      thisIsSwitch = this.responseText;
-//      console.log(boolForState);
-      if(thisIsSwitch == 1)
+  if (this.readyState == 4 && this.status == 200) 
+  {
+    document.getElementById("Switcher").innerHTML = this.responseText;
+    thisIsSwitch = this.responseText;
+    if(thisIsSwitch == 1)
+    {
+      if(boolForState == false)
       {
-        if(boolForState == false){
+        intrerupator = 1;
         $('#button').toggleClass('on');
-//        console.log("Triggerd");
-//         $('#button').attr("onclick",sendData(thisIsSwitch));
         boolForState = true;
-        }
-        }
-        else if( thisIsSwitch == 0)
-        {
-          if(boolForState == true)
-          {
-          $('#button').toggleClass();
-//          $('#button').attr("onclick",sendData(thisIsSwitch));
-  
+      }
+     }
+     else if( thisIsSwitch == 0)
+     {
+        if(boolForState == true)
+        { 
+          intrerupator = 0;
+          $('#button').toggleClass();  
           boolForState = false;
-          }
         }
+     }
     }
   };
-//  console.log("The switch value is : " + thisIsSwitch );
   xhttp.open("GET", "readSwitch", true);
   xhttp.send();
 }
 $(document).ready(function(){
   $('#button').click(function(){
-//    $(this).toggleClass('on');
-    if(valoareBec == 0)
-    {
+  if(valoareBec == 0)
+  {
     valoareBec = 1;
     $(this).attr("onclick",sendData(valoareBec));
-//    console.log(valoareBec);
   }
-    else 
+  else 
   {
     valoareBec = 0;
     $(this).attr("onclick",sendData(valoareBec));
-//    console.log(valoareBec);
-} 
+  } 
   });
 });
 </script>
